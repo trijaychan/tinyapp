@@ -42,6 +42,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  delete urlDatabase[req.params.shortURL];
+  res.render("urls_index", { urls: urlDatabase });
+});
+
 app.get("/urls/new", (req, res) => {
   res.render("urls_new");
 });
