@@ -1,5 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const { render } = require("ejs");
+
 const app = express();
 const PORT = 8080;
 
@@ -24,6 +27,7 @@ function generateRandomString() {
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -38,34 +42,66 @@ app.get("/hello", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  res.render("urls_index", { urls: urlDatabase, username: req.cookies.username });
+});
+
+app.post("/login", (req, res) => {
+  if (req.body.username === "") return;
+
+  res.cookie("username", req.body.username);
+  
+  const templateVars = {
+    username: req.body.username,
+    urls: urlDatabase
+  };
+
   res.render("urls_index", templateVars);
 });
 
+app.post("/logout", (req, res) => {
+  res.clearCookie("username", req.body.username);
+  res.render("urls_index", { urls: urlDatabase, username: req.body.username })
+})
+
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
-  res.render("urls_index", { urls: urlDatabase });
+  res.render("urls_index", { urls: urlDatabase, username: req.cookies.username});
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  res.render("urls_new", { username: req.cookies.username });
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = "http://www." + req.body.longURL;
-  const templateVars = { shortURL, longURL: req.body.longURL };
+
+  const templateVars = { 
+    username: req.body.username,
+    shortURL, 
+    longURL: req.body.longURL
+  };
+
   res.render("urls_show", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL };
+  const templateVars = {
+    username: req.body.username,
+    shortURL: req.params.shortURL, 
+    longURL: req.params.longURL 
+  };
   res.render("urls_show", templateVars);
-})
+});
+
+app.post("/urls/:shortURL/edit", (req, res) => {
+  urlDatabase[req.params.shortURL] = "http://www." + req.body.longURL;
+  res.render("urls_index", { urls: urlDatabase, username: req.cookies.username });
+});
 
 app.get("/u/:shortURL", (req, res) => {
   res.redirect(urlDatabase[req.params.shortURL]);
-})
+});
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
