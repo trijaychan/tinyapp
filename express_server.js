@@ -76,8 +76,8 @@ app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = "http://www." + req.body.longURL;
 
-  const templateVars = { 
-    username: req.body.username,
+  const templateVars = {
+    username: req.cookies.username,
     shortURL, 
     longURL: req.body.longURL
   };
@@ -87,10 +87,11 @@ app.post("/urls", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
-    username: req.body.username,
+    username: req.cookies.username,
     shortURL: req.params.shortURL, 
     longURL: req.params.longURL 
   };
+
   res.render("urls_show", templateVars);
 });
 
