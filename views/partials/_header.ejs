@@ -8,11 +8,6 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-        <% if (user === undefined) { %>
-          <a class="nav-item nav-link" href="/login">Login</a>
-          <a class="nav-item nav-link" href="/register">Register</a>
-          </form>
-        <% } %>
       </div>
       <div class="navbar-nav ml-auto">
         <div>
@@ -21,6 +16,11 @@
               <a class="navbar-text">Logged In As: <%= user.email %>!</a>
               <button type="submit" class="btn btn-outline-dark ml-3">Logout</button>
             </form>
+          <% } else { %>
+            <div class="form-inline">
+              <a class="nav-item nav-link" href="/login">Login</a>
+              <a class="nav-item nav-link" href="/register">Register</a>
+            </div>
           <% } %>
         </div>
       </div>
