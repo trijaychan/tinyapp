@@ -13,15 +13,15 @@ const urlDatabase = {
 };
 
 const users = {
-  checkEmail: function(email) {
+  check: function(key, value) {
     for (const user in this) {
-      if (this[user]) {
-        if (this[user].email === email) return user;
+      if (this[user][key] === value) {
+        return user;
       }
     }
   
-    return false;
-  }
+    return null;
+  },
 };
 
 function generateRandomString() {
@@ -59,11 +59,7 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  if (req.body.email === "" || req.body.password === "") {
-    res.statusCode = 400;
-    res.render("urls_register", { user: users[req.cookies.user_id] });
-    return;
-  } else if (users.checkEmail(req.body.email)) {
+  if (req.body.email === "" || req.body.password === "" || users.check("email", req.body.email)) {
     res.statusCode = 400;
     res.render("urls_register", { user: users[req.cookies.user_id] });
     return;
@@ -87,13 +83,14 @@ app.get("/login", (req, res) => {
 })
 
 app.post("/login", (req, res) => {
-  const id = users.checkEmail(req.body.email);
+  const id = users.check("email", req.body.email);
 
-  if (id !== false && users[id].password === req.body.password) {
+  if (!id || users[id].password !== req.body.password) {
+    res.statusCode = 403;
+    res.render("urls_login", { user: users[req.cookies.user_id] });
+  } else {
     res.cookie("user_id", id);
     res.render("urls_index", { urls: urlDatabase, user: users[id] });
-  } else {
-    res.render("urls_login", { user: users[req.cookies.user_id] });
   }
 });
 
