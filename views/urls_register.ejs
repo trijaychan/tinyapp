@@ -12,11 +12,13 @@
 <body>
   <%- include('partials/_header') %>
   <main style="margin: 1em;">
-    <h3>Register</h3>
-    <form class="form-inline" method="post" action="/register">
-      <input type="email" class="form-control mr-sm-2" name="email" placeholder="Email">
-      <input type="password" class="form-control mr-sm-2" name="password" placeholder="Password">
-      <button type="submit" class="btn btn-outline-dark">Sign Up</button>
+    <h3>Create Account</h3>
+    <form method="post" action="/register">
+      <th>Email Address</th>
+      <input type="email" class="form-control w-25 mb-3 mt-2" name="email" placeholder="Email">
+      <th>Password</th>
+      <input type="password" class="form-control w-25 mb-3 mt-2" name="password" placeholder="Password">
+      <button type="submit" class="btn btn-primary">Register</button>
     </form>
   </main>
 

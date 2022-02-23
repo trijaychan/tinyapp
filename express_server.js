@@ -101,6 +101,25 @@ app.post("/logout", (req, res) => {
   res.render("urls_index", { urls: urlDatabase, user: undefined })
 });
 
+// new url page
+
+app.get("/urls/new", (req, res) => {
+  res.render("urls_new", { user: users[req.cookies.user_id] });
+});
+
+app.post("/urls", (req, res) => {
+  const shortURL = generateRandomString();
+  urlDatabase[shortURL] = "http://www." + req.body.longURL;
+
+  const templateVars = {
+    user: users[req.cookies.user_id],
+    shortURL, 
+    longURL: req.body.longURL
+  };
+
+  res.render("urls_show", templateVars);
+});
+
 // shortURL functionalities
 
 app.get("/urls/:shortURL", (req, res) => {
@@ -125,25 +144,6 @@ app.post("/urls/:shortURL/edit", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   delete urlDatabase[req.params.shortURL];
   res.render("urls_index", { urls: urlDatabase, user: users[req.cookies.user_id]});
-});
-
-// new url page
-
-app.get("/urls/new", (req, res) => {
-  res.render("urls_new", { user: users[req.cookies.user_id] });
-});
-
-app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  urlDatabase[shortURL] = "http://www." + req.body.longURL;
-
-  const templateVars = {
-    user: users[req.cookies.user_id],
-    shortURL, 
-    longURL: req.body.longURL
-  };
-
-  res.render("urls_show", templateVars);
 });
 
 // when server launches
