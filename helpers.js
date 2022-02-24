@@ -26,7 +26,7 @@ const getUserByKey = (key, value, database) => {
 };
 
 // generates a random ID for shortURLs and user IDs
-function generateRandomString() {
+const generateRandomString = function() {
   let output = "";
   let temp;
 
@@ -44,4 +44,4 @@ module.exports = {
   urlsForUser,
   getUserByKey,
   generateRandomString
-}
+};

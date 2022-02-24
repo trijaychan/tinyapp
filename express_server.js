@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 const { urlsForUser, getUserByKey, generateRandomString } = require("./helpers");
-const { reset } = require("nodemon");
 
 const app = express();
 const PORT = 8080;
@@ -28,7 +27,7 @@ app.get("/", (req, res) => {
     const user = users[req.session.user_id];
     res.render("urls_index", { urls, user });
   }
-})
+});
 
 // /urls route
 
@@ -84,7 +83,7 @@ app.get("/login", (req, res) => {
     const user = users[req.session.user_id];
     res.render("urls_index", { urls, user });
   }
-})
+});
 
 app.post("/login", (req, res) => {
   const id = getUserByKey("email", req.body.email, users);
@@ -129,7 +128,7 @@ app.post("/urls", (req, res) => {
   
     const templateVars = {
       user: users[req.session.user_id],
-      shortURL, 
+      shortURL,
       longURL: req.body.longURL
     };
   
@@ -143,14 +142,14 @@ app.get("/urls/:shortURL", (req, res) => {
   if (!req.session.user_id) {
     res.status(400).send("Please login to access URLs.\n");
   } else if (!urlDatabase[req.params.shortURL]) {
-    res.status(400).send("URL for the given ID does not exist.\n")
+    res.status(400).send("URL for the given ID does not exist.\n");
   } else if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     res.status(400).send("No access to given URL.\n");
   } else {
     const templateVars = {
       user: users[req.session.user_id],
-      shortURL: req.params.shortURL, 
-      longURL: req.params.longURL 
+      shortURL: req.params.shortURL,
+      longURL: req.params.longURL
     };
 
     res.render("urls_show", templateVars);
@@ -161,7 +160,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
   if (!req.session.user_id) {
     res.status(400).send("Please login to access URLs.\n");
   } else if (!urlDatabase[req.params.shortURL]) {
-    res.status(400).send("URL for the given ID does not exist.\n")
+    res.status(400).send("URL for the given ID does not exist.\n");
   } else if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     res.status(400).send("No access to given URL.\n");
   } else {
@@ -177,7 +176,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.user_id) {
     res.status(400).send("Please login to access URLs.\n");
   } else if (!urlDatabase[req.params.shortURL]) {
-    res.status(400).send("URL for the given ID does not exist.\n")
+    res.status(400).send("URL for the given ID does not exist.\n");
   } else if (req.session.user_id !== urlDatabase[req.params.shortURL].userID) {
     res.status(400).send("No access to given URL.\n");
   } else {
