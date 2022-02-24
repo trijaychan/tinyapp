@@ -22,7 +22,7 @@ const getUserByKey = (key, value, database) => {
     }
   }
 
-  return null;
+  return undefined;
 };
 
 // generates a random ID for shortURLs and user IDs
