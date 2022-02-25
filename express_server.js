@@ -121,7 +121,7 @@ app.post("/login", (req, res) => {
 });
 
 // POST "/logout"
-//   deletes cookies and redirects to /urls
+//   deletes cookies and redirects to "/urls"
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
@@ -151,7 +151,7 @@ app.post("/urls", (req, res) => {
     res.status(400).send("Please login to access URLs\n");
   } else {
     const shortURL = generateRandomString();
-    const longURL = "http://www." + req.body.longURL;
+    const longURL = req.body.longURL;
     
     // adds new shortened URL to url database
     urlDatabase[shortURL] = {
@@ -181,7 +181,7 @@ app.get("/urls/:shortURL", (req, res) => {
   } else if (user.id !== urlDatabase[shortURL].userID) { // if URL user ID does not match logged user ID
     res.status(400).send("No access to given URL.\n");
   } else {
-    const longURL = req.params.longURL;
+    const longURL = urlDatabase[shortURL].longURL;
     res.render("urls_show", { longURL, shortURL, user });
   }
 });
@@ -203,7 +203,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
     res.status(400).send("No access to given URL.\n");
   } else {
     // edits the longURL for the given ID
-    urlDatabase[shortURL].longURL = "http://www." + longURL;
+    urlDatabase[shortURL].longURL = longURL;
     res.redirect("/urls");
   }
 });
