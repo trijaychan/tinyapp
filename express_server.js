@@ -79,7 +79,7 @@ app.post("/register", (req, res) => {
   };
 
   if (!user.email || !user.password) { // the given email or password is invalid
-    res.statusCode(400).send("Please enter a valid email address/password.\n");
+    res.status(400).send("Please enter a valid email address/password.\n");
   } else if (getUserByKey("email", req.body.email, users)) { // if the given email is already registered
     res.status(400).send("Email address is already in use.\n");
   } else {
