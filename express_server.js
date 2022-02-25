@@ -31,10 +31,9 @@ app.get("/", (req, res) => {
   const user = users[req.session.user_id];
 
   if (!user) { // if no user is logged in
-    res.render("urls_login",  { user });
+    res.redirect("/login");
   } else { // if a user is logged in
-    const urls = urlsForUser(user.id, urlDatabase); // an object containing urls for the given user
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
@@ -61,15 +60,14 @@ app.get("/register", (req, res) => {
   if (!user) {
     res.render("urls_register", { user });
   } else {
-    const urls = urlsForUser(user.id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
 // POST "/register"
 //   if given email and password are valid then creates a
 //   new user, logs them in, and redirects to "/urls"
-//   if given meial and password are invalid, returns HTML
+//   if given email and password are invalid, returns HTML
 //   with an error message
 app.post("/register", (req, res) => {
   const user = {
@@ -86,9 +84,7 @@ app.post("/register", (req, res) => {
     user.password = bcrypt.hashSync(user.password, 10); // hashes password
     users[user.id] = user; // adds newly created user to the users database
     req.session.user_id = user.id; // sets cookie for new user
-
-    const urls = urlsForUser(req.session.user_id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
@@ -101,8 +97,7 @@ app.get("/login", (req, res) => {
   if (!user) {
     res.render("urls_login", { user });
   } else {
-    const urls = urlsForUser(user.id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
@@ -121,8 +116,7 @@ app.post("/login", (req, res) => {
     res.status(400).send("Incorrect email address or password.\n");
   } else {
     req.session.user_id = id; // sets cookie for user
-    const urls = urlsForUser(id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
@@ -131,7 +125,7 @@ app.post("/login", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session.user_id = null;
   const urls = urlsForUser(req.session.user_id, urlDatabase);
-  res.render("urls_index", { urls, user: undefined });
+  res.redirect("/urls");
 });
 
 // GET "/urls/new"
@@ -165,8 +159,8 @@ app.post("/urls", (req, res) => {
       longURL,
       userID: user.id // associates URL to current user
     };
-  
-    res.render("urls_show", { shortURL, longURL, user });
+    
+    res.redirect("/urls/" + shortURL);
   }
 });
 
@@ -211,9 +205,7 @@ app.post("/urls/:shortURL/edit", (req, res) => {
   } else {
     // edits the longURL for the given ID
     urlDatabase[shortURL].longURL = "http://www." + longURL;
-
-    const urls = urlsForUser(req.session.user_id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
@@ -234,9 +226,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   } else {
     // deletes URL for url database
     delete urlDatabase[shortURL];
-
-    const urls = urlsForUser(req.session.user_id, urlDatabase);
-    res.render("urls_index", { urls, user });
+    res.redirect("/urls");
   }
 });
 
