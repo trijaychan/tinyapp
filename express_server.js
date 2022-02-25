@@ -123,8 +123,7 @@ app.post("/login", (req, res) => {
 // POST "/logout"
 //   deletes cookies and redirects to /urls
 app.post("/logout", (req, res) => {
-  req.session.user_id = null;
-  const urls = urlsForUser(req.session.user_id, urlDatabase);
+  req.session = null;
   res.redirect("/urls");
 });
 
